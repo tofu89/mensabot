@@ -2,7 +2,7 @@
 # Mensabot @ Binzmühle #
 ########################
 
-#a piece of code by Team Aperol, based on initial code by Ueli Reber (@el_ueli)
+#a piece of code by Tobias Füchslin (@tofu89), based on initial code by Ueli Reber (@el_ueli)
 #inspired by this great tutorial: http://www.r-datacollection.com/blog/Programming-a-Twitter-bot/
 library(rvest)
 library(stringr)
@@ -38,6 +38,11 @@ menu.einfachgut <- str_replace_all(menu.einfachgut, "  ", " ")
 menu.einfachgut <- str_replace_all(menu.einfachgut, " ,", ",")
 menu.einfachgut <- str_replace_all(menu.einfachgut, "<p>", "")
 menu.einfachgut <- str_replace_all(menu.einfachgut, ", Fleisch:",  " |Fleisch:")
+menu.einfachgut <- str_replace_all(menu.einfachgut, ", Fisch:",  " |Fisch:")
+menu.einfachgut <- str_replace_all(menu.einfachgut, "\\|Fleisch:(.*)", "")#as long as the 140 character limit exists
+menu.einfachgut <- str_replace_all(menu.einfachgut, "\\|Fisch:(.*)", "")#as long as the 140 character limit exists
+menu.einfachgut <- str_replace_all(menu.einfachgut, ", mit", " &")
+menu.einfachgut <- str_replace_all(menu.einfachgut, "mit", "&")
 menu.einfachgut <- str_trim(menu.einfachgut, "both")
 menu.einfachgut
 
@@ -53,15 +58,21 @@ menu.vegi <- str_replace_all(menu.vegi, "<br>", " ,")
 menu.vegi <- str_replace_all(menu.vegi, "  ", " ")
 menu.vegi <- str_replace_all(menu.vegi, " ,", ",")
 menu.vegi <- str_replace_all(menu.vegi, "<p>", "")
+menu.vegi <- str_replace_all(menu.vegi, ", mit", " &")
+menu.vegi <- str_replace_all(menu.vegi, "mit", "&")
 menu.vegi <- str_trim(menu.vegi, "both")
+#menu.vegi <- str_replace_all(menu.vegi, ", Menüsalat", "")
 menu.vegi
 
 #assemble the tweet
-tweet.text <- paste0("Fleisch: ", menu.einfachgut,"\n\n","Vegi: ",menu.vegi)
+tweet.text <- paste0("🥩 ", menu.einfachgut,"\n","🥗 ",menu.vegi)
 
 #set up Twitter access for user VegivonRou
 source("Credentials.R", encoding = "UTF-8")
-setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
+setup_twitter_oauth(consumer_key =  twitter_api_key,
+                    consumer_secret =  twitter_api_secret,
+                    access_token =  twitter_access_token,
+                    access_secret =  twitter_access_token_secret)
 
 #send Tweet
 if (stop==0){
