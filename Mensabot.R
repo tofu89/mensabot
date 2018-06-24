@@ -27,7 +27,6 @@ menu <- readLines(URL,encoding = "UTF-8")
 
 #get today's carnivore menu location
 einfachgut <- grep("einfach gut",menu)+1
-menu[einfachgut]
 
 #copy the "einfach gut" menu
 menu.einfachgut <- menu[einfachgut]
@@ -44,7 +43,6 @@ menu.einfachgut <- str_replace_all(menu.einfachgut, "\\|Fisch:(.*)", "")#as long
 menu.einfachgut <- str_replace_all(menu.einfachgut, ", mit", " &")
 menu.einfachgut <- str_replace_all(menu.einfachgut, "mit", "&")
 menu.einfachgut <- str_trim(menu.einfachgut, "both")
-menu.einfachgut
 
 #get today's vegetarian menu location
 vegi <- grep("natürlich vegi",menu)+1
@@ -62,12 +60,11 @@ menu.vegi <- str_replace_all(menu.vegi, ", mit", " &")
 menu.vegi <- str_replace_all(menu.vegi, "mit", "&")
 menu.vegi <- str_trim(menu.vegi, "both")
 #menu.vegi <- str_replace_all(menu.vegi, ", Menüsalat", "")
-menu.vegi
 
 #assemble the tweet
 tweet.text <- paste0("🥩 ", menu.einfachgut,"\n","🥗 ",menu.vegi)
 
-#set up Twitter access for user VegivonRou
+#set up Twitter access
 source("Credentials.R", encoding = "UTF-8")
 setup_twitter_oauth(consumer_key =  twitter_api_key,
                     consumer_secret =  twitter_api_secret,
@@ -81,5 +78,4 @@ tweet(tweet.text)
 
 #save today's menu to the log file
 log.df <- data.frame(date = Sys.Date(), stop = stop, pacman = NA, menu = menu.einfachgut, tweet = tweet.text)
-
 write.table(log.df, file = "menu_log.csv", row.names = FALSE, col.names = FALSE, append = TRUE, sep = ";")
